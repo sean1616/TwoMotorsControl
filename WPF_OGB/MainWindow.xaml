@@ -1,0 +1,830 @@
+﻿<Window x:Class="WPF_OGB.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WPF_OGB.ViewModels"
+        xmlns:local="clr-namespace:WPF_OGB"
+        mc:Ignorable="d"
+        Title="Two Motors Station" Height="620" Width="1520"
+        Closed="Window_Closed"
+        SizeChanged="Window_SizeChanged"
+        Style="{DynamicResource WinAll }"
+    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
+    
+    <Window.Resources>
+        <Style x:Key="WinAll" TargetType="{x:Type Window}">
+            <Setter Property="FontFamily"
+        Value="Century Gothic" />
+            <!--<Setter Property="FontSize"
+        Value="18" />-->
+        </Style>
+        
+        <Style x:Key="ButtonFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="Black" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#F3F3F3" Offset="0"/>
+            <GradientStop Color="#EBEBEB" Offset="0.5"/>
+            <GradientStop Color="#DDDDDD" Offset="0.5"/>
+            <GradientStop Color="#CDCDCD" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070"/>
+
+
+        <Style x:Key="ToggleButtonStyle_text_switch" TargetType="{x:Type ToggleButton}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="bord_background" Grid.ColumnSpan="2" Background="{TemplateBinding Background}" CornerRadius="5"/>
+                            <ContentPresenter TextBlock.FontSize="15" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.2*"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="0.2*"/>
+                                </Grid.ColumnDefinitions>
+                                <Ellipse Fill="#FFC33030" Width="20" Height="20" Grid.Column="1"/>
+
+                                <Grid Grid.Column="1" Grid.ColumnSpan="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Rectangle Fill="LightGray" Height="20" Grid.Column="1" Grid.ColumnSpan="2"/>
+                                </Grid>
+                                <Ellipse Fill="LightGray" Width="20" Height="20" Grid.Column="1" Name="elip_uncheck"/>
+                                <Ellipse Fill="LightGray" Width="20" Height="20" Grid.Column="2" Name="elip_check"/>
+                            </Grid>
+                        </Grid>
+                        <!--<theme:ButtonChrome x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" RenderPressed="{TemplateBinding IsPressed}" RenderDefaulted="{TemplateBinding Button.IsDefaulted}" RenderMouseOver="{TemplateBinding IsMouseOver}" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </theme:ButtonChrome>-->
+                        <ControlTemplate.Triggers>
+                            <!--<Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="RenderDefaulted" TargetName="Chrome" Value="true"/>
+                            </Trigger>-->
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Fill" TargetName="elip_uncheck" Value="lightGray"/>
+                                <Setter Property="Fill" TargetName="elip_check" Value="#FF0FFFEE"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter Property="Fill" TargetName="elip_uncheck" Value="#FF0FFFEE"/>
+                                <Setter Property="Fill" TargetName="elip_check" Value="lightGray"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="false">
+                                <Setter Property="Background" TargetName="bord_background" Value="#ADADAD"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" TargetName="bord_background" Value="#FFADACAC"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#ADADAD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="ButtonFocusVisual1">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="Black" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <LinearGradientBrush x:Key="ButtonNormalBackground1" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#F3F3F3" Offset="0"/>
+            <GradientStop Color="#EBEBEB" Offset="0.5"/>
+            <GradientStop Color="#DDDDDD" Offset="0.5"/>
+            <GradientStop Color="#CDCDCD" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ButtonNormalBorder1" Color="#FF707070"/>
+
+
+        <Style x:Key="ToggleButtonStyle_Dot" TargetType="{x:Type ToggleButton}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual1}"/>
+            <Setter Property="Background" Value="{StaticResource ButtonNormalBackground1}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder1}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Ellipse Fill="LightGray" Width="20" Height="20" Grid.Column="2" Name="elip_check"/>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Fill" TargetName="elip_check" Value="#FF0FFFEE"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter Property="Fill" TargetName="elip_check" Value="lightGray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:ComViewModel/>
+    </Window.DataContext>
+
+    <Grid Background="#FFBDBDBD">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" MinWidth="540"/>
+            <ColumnDefinition Width="1.8*" MaxWidth="650"/>
+            <ColumnDefinition x:Name="textCmd_width" MaxWidth="220" Width="0*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="btn_Cam_Connect" Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown"
+                            Click="btn_Cam_Connect_Click"
+                                ToolTip="Connect Cam" Background="#FFE6E6E6" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Height="40" Width="40" >
+                        <Button.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="90"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Button.RenderTransform>
+                        <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                    </Button>
+                    <Button x:Name="btn_Cam_Stop" Style="{DynamicResource style_BTN_Rect_icon_Only_v2}"
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown"
+                            IsEnabled="False"
+                            Click="btn_Cam_Stop_Click"
+                                ToolTip="Stop Cam" Background="#FFE6E6E6" Grid.Row="1" Height="40" Width="40" >
+                        <Image Source="Resources/Stop.png"
+                                       Visibility="Collapsed" />
+                    </Button>
+                    <Button x:Name="btn_Cam_Mirror" Style="{DynamicResource style_BTN_Rect_icon_Only_v3}"
+                            Click="btn_Cam_Mirror_Click"
+                                ToolTip="Camera Flip" Background="#FFE6E6E6" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Height="40" Width="40" >
+                        <Image Source="Resources/Change.png"
+                                       Visibility="Collapsed" />
+                    </Button>
+                    <Button x:Name="btn_Cam_Rotate" Style="{DynamicResource style_BTN_Rect_icon_Only_v3}"
+                            Click="btn_Cam_Rotate_Click"
+                                ToolTip="Camera Rotate 90&#186;" Background="#FFE6E6E6" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Height="40" Width="40" >
+                        <Image Source="Resources/refresh.png"
+                                       Visibility="Collapsed" />
+                    </Button>
+                    <ComboBox x:Name="cbox_Cam" Grid.Column="1" FontSize="15" VerticalAlignment="Center" Width="300"
+                                  DropDownClosed="cbox_Cam_DropDownClosed"
+                              DropDownOpened="cbox_Cam_DropDownOpened"
+                                  HorizontalContentAlignment="Center" />
+                    <TextBlock x:Name="txt_for_test" Text=" " VerticalAlignment="Center"/>
+                    <!--<Button x:Name="btn_Cam_Window" Style="{DynamicResource style_BTN_Rect_icon_Only_v3}"
+                            Click="btn_Cam_Window_Click"
+                                ToolTip="Connect Cam" Background="#FFE6E6E6" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Height="40" Width="40" >
+                        <Image Source="Resources/ChangeWindow.png"
+                                       Visibility="Collapsed" />
+                    </Button>-->
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="btn_TextOff" Style="{DynamicResource style_BTN_Rect_icon_Only_v3}"
+                            Click="btn_TextOff_Click"
+                                ToolTip="Open/Close Text Command Region" Background="#FFE6E6E6" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Height="40" Width="40" >
+                        <Image Source="Resources/ChangeWindow.png"
+                                       Visibility="Collapsed" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Name="main_frameHolder">
+                <Image x:Name="frameHolder"
+                               Grid.Row="1"
+                               Visibility="Visible"
+                       
+                   Loaded="btn_Camera_Loaded"
+                               RenderTransformOrigin="0.5,0.5" Margin="5,5,0,5">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleY="1"
+                                                    ScaleX="{Binding CAM_flip}" />
+                            <SkewTransform AngleY="0"
+                                                   AngleX="0" />
+                            <!--<RotateTransform Angle="{Binding CAM_angle, UpdateSourceTrigger=PropertyChanged}" />-->
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
+            </Grid>
+        </Grid>
+
+        <Grid Margin="0,5,5,5" Grid.Column="2" x:Name="grid_text_command">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+
+            <Border Background="DimGray" CornerRadius="5" Grid.RowSpan="3"/>
+
+            <Grid  Margin="0,5,5,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Comport" FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+                <ComboBox x:Name="cbox_port" Grid.Column="1" FontSize="15" VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                          SelectedItem="{Binding Selected_Comport}"
+                          DropDownOpened="cbox_port_DropDownOpened"
+                          DropDownClosed="cbox_port_DropDownClosed" Width="{Binding ActualWidth, ElementName=cbox_M1_Comport, Mode=OneWay}"/>
+            </Grid>
+
+            <TextBox x:Name="txt_msg" Grid.Row="1" Margin="5,0,5,0" Background="#FFD0CECE"/>
+
+            <Grid Grid.Row="2" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="4*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="btn_SendCMD"
+                            Style="{DynamicResource style_BTN_icon_Only}"
+                            Background="#FFE6E6E6"
+                            ToolTip="Send CMD"
+                        Click="btn_SendCMD_Click"
+                            >
+                    <Image Source="Resources/send.png"
+                               Visibility="Collapsed" />
+                </Button>
+
+                <TextBox x:Name="txt_cmd" Grid.Column="1" Background="#FFDADADA" 
+                         PreviewKeyDown="txt_cmd_PreviewKeyDown"  HorizontalContentAlignment="Left"
+                                     VerticalContentAlignment="Center" FontSize="15"/>
+            </Grid>
+        </Grid>
+
+        <StackPanel Orientation="Vertical" Grid.Column="1" Focusable="True" VerticalAlignment="Center" >
+            <Grid x:Name="M1" Grid.Column="1" MinWidth="450" Height="290" GotFocus="StackPanel_GotFocus" DataContext="{Binding model_1}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition MinWidth="280" Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.ColumnSpan="2" Background="DimGray"  CornerRadius="5" Margin="5,5,5,0" Grid.RowSpan="2"/>
+
+                <TextBox Grid.ColumnSpan="2" FontSize="20" Text="{Binding MotorSet_Name, Mode=TwoWay, FallbackValue=MotorSet}" KeyDown="TextBox_MotorSet_Name_KeyDown" VerticalAlignment="Bottom" Margin="20,0,0,2" HorizontalAlignment="Left" Foreground="#FF7FD3C3" TextDecorations="{x:Null}" FontFamily="Segoe UI Semibold" Background="{x:Null}" BorderBrush="{x:Null}"/>
+
+                <StackPanel Orientation="Vertical" Margin="10,0,10,10" Grid.Row="1">
+                    <ToggleButton Style="{DynamicResource ToggleButtonStyle_text_switch}" IsChecked="{Binding Connected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="btn_M1_connect" Height="30" Content="Connect" Margin="0,5,0,5" 
+                                  Checked="btn_Port_connect_Checked" Unchecked="btn_Port_connect_Unchecked" Background="#FF929090"/>
+                    <Grid Height="30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Comport" FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cbox_M1_Comport" Grid.Column="1" FontSize="15" VerticalAlignment="Center" 
+                                  SelectedItem="{Binding Comport, UpdateSourceTrigger=PropertyChanged}"
+                                  HorizontalContentAlignment="Center"
+                                  DropDownOpened="cbox_M1_Comport_DropDownOpened"
+                                  DropDownClosed="cbox_M1_Comport_DropDownClosed"/>
+                    </Grid>
+
+                    <Grid Height="30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Step Delay" FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+                        <TextBox x:Name="txt_stepDelay" Grid.Column="1" Text="{Binding StepDelay, FallbackValue=8}" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"
+                                 PreviewKeyDown="txt_stepDelay_PreviewKeyDown"/>
+                    </Grid>
+
+                    <Grid Height="30" Visibility="{Binding IsSavePosShowClose}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Jog Step" FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+
+                        <TextBox Grid.Column="1" Text="{Binding Jop_Steps, FallbackValue=300, Mode=TwoWay, NotifyOnTargetUpdated=True}" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <ToggleButton x:Name="btn_M1_MotorMode" Visibility="{Binding IsSavePosShowClose}"
+                                  Style="{DynamicResource ToggleButtonStyle_text_switch}" 
+                                  Background="#FF929090" Height="30" Content="Cont. Mode"
+                                  IsChecked="{Binding Continue_Jog, Mode=TwoWay}"
+                                  Click="ToggleButton_Click" Margin="0,5,0,5"/>
+
+                    <Grid Height="30" Visibility="{Binding IsSavePosShowClose}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Direction" FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cbox_direction" Grid.Column="1" SelectedIndex="0" MaxHeight="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                            <ComboBoxItem Content="X"/>
+                            <ComboBoxItem Content="Y"/>
+                            <ComboBoxItem Content="Z"/>
+                        </ComboBox>
+                        <ToggleButton Style="{DynamicResource ToggleButtonStyle_Dot}" x:Name="tbtn_direction" ToolTip="Reverse Direction" Grid.Column="2" Click="tbtn_direction_Click"/>
+                    </Grid>
+
+                    <!--Save Position Box-->
+                    <Grid x:Name="grid_SavePosBox" Height="100" Visibility="Collapsed">                       
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.RowSpan="2" Background="#FFA0A0A0" BorderBrush="White" CornerRadius="5"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Button 
+                            Style="{DynamicResource style_BTN_icon_Only}"
+                            Background="#FFE6E6E6"
+                            ToolTip="Save position Box"
+                                Click="btn_SavePosition_Click">
+                                <Image Source="Resources/Save.png"
+                               Visibility="Collapsed" />
+                            </Button>
+                            <RadioButton Tag="P1" Style="{DynamicResource style_RadioButton_circle_Text_Only_ImageProperty}" Checked="RadioButton_Checked" Background="#FFE6E6E6" Grid.Column="1" >
+                                <TextBlock Text="1"/>
+                            </RadioButton>
+                            <RadioButton Tag="P2" Style="{DynamicResource style_RadioButton_circle_Text_Only_ImageProperty}"  Checked="RadioButton_Checked" Background="#FFE6E6E6" Grid.Column="2" >
+                                <TextBlock Text="2"/>
+                            </RadioButton>
+                            <RadioButton Tag="P3"  Style="{DynamicResource style_RadioButton_circle_Text_Only_ImageProperty}"  Checked="RadioButton_Checked" Background="#FFE6E6E6" Grid.Column="3" >
+                                <TextBlock Text="3"/>
+                            </RadioButton>
+                            <RadioButton  Tag="P4" Style="{DynamicResource style_RadioButton_circle_Text_Only_ImageProperty}" Checked="RadioButton_Checked" Background="#FFE6E6E6" Grid.Column="4" >
+                                <TextBlock Text="4"/>
+                            </RadioButton>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="X:" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Y:" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="2"/>
+                            <TextBlock Text="Z:" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="4"/>
+
+                            <TextBlock Text="{Binding sPos_X}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+                            <TextBlock Text="{Binding sPos_Y}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="3"/>
+                            <TextBlock Text="{Binding sPos_Z}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="5"/>
+
+                        </Grid>
+
+                    </Grid>
+
+                    <Grid Height="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="btn_Show_SavePosition_Box"
+                            Style="{DynamicResource style_BTN_icon_Only}"
+                            Background="#FFE6E6E6"
+                            ToolTip="Show/Close Save Position Box"
+                                Click="btn_Show_SavePosition_Box_Click"
+                            >
+                            <Image Source="Resources/bleach.png"
+                               Visibility="Collapsed" />
+                        </Button>
+                        <Button x:Name="btn_Pos1"  Style="{DynamicResource style_Button_circle_Text_Only_ImageProperty}" Background="#FFE6E6E6" Grid.Column="1" >
+                            <TextBlock Text="1"/>
+                        </Button>
+                        <Button x:Name="btn_Pos2"  Style="{DynamicResource style_Button_circle_Text_Only_ImageProperty}" Background="#FFE6E6E6" Grid.Column="2" >
+                            <TextBlock Text="2"/>
+                        </Button>
+                        <Button x:Name="btn_Pos3"  Style="{DynamicResource style_Button_circle_Text_Only_ImageProperty}" Background="#FFE6E6E6" Grid.Column="3" >
+                            <TextBlock Text="3"/>
+                        </Button>
+                        <Button x:Name="btn_Pos4"  Style="{DynamicResource style_Button_circle_Text_Only_ImageProperty}" Background="#FFE6E6E6" Grid.Column="4" >
+                            <TextBlock Text="4"/>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Width="240" Height="150" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition />
+                            <ColumnDefinition  Width="50"/>
+                            <ColumnDefinition  Width="50"/>
+                            <ColumnDefinition  Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="btn_B_p" 
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown" 
+                                PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                            Style="{DynamicResource style_BTN_Rect_icon_Only}" ToolTip="Y+" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" Grid.Column="3">
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+                        <Button x:Name="btn_B_m"  Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown"
+                                    PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="Y-" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" Grid.Row="2" RenderTransformOrigin="0.5,0.5" Grid.Column="3">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="180"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+
+                        <Button x:Name="btn_A_p"  Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown"
+                                    PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="X+" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="5">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="90.944"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+                        <Button x:Name="btn_A_m"  Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown"
+                                    PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="X-" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="2">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-90.821"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+
+                        <Button x:Name="btn_C_p"  Style="{DynamicResource style_BTN_Rect_icon_Only}" 
+                                 PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="Z+" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" RenderTransformOrigin="0.5,0.5">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+                        <Button x:Name="btn_C_m"  Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="Z-" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" RenderTransformOrigin="0.5,0.5" Grid.Row="2">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="180"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="X:" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Y:" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="2"/>
+                        <TextBlock Text="Z:" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="4"/>
+
+                        <TextBlock Text="{Binding Pos_X}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+                        <TextBlock Text="{Binding Pos_Y}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="3"/>
+                        <TextBlock Text="{Binding Pos_Z}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="5"/>
+
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid x:Name="M2" Grid.Column="1" MinWidth="450" Height="290" GotFocus="StackPanel_GotFocus" DataContext="{Binding model_2}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition MinWidth="280" Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.ColumnSpan="2" Background="DimGray"  CornerRadius="5" Margin="5" Grid.RowSpan="2"/>
+
+                <TextBox Grid.ColumnSpan="2" FontSize="20" Text="{Binding MotorSet_Name,Mode=TwoWay, FallbackValue=MotorSet}"  KeyDown="TextBox_MotorSet_Name_KeyDown" VerticalAlignment="Bottom" Margin="20,0,0,2" HorizontalAlignment="Left" Foreground="#FF7FD3C3" TextDecorations="{x:Null}" FontFamily="Segoe UI Semibold" Background="{x:Null}" BorderBrush="{x:Null}"/>
+
+                <StackPanel Orientation="Vertical" Margin="10,0,10,10" Grid.Row="1">
+                    <ToggleButton Style="{DynamicResource ToggleButtonStyle_text_switch}" 
+                                  IsChecked="{Binding Connected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Height="30" Content="Connect" Margin="0,5,0,5" 
+                                  Checked="btn_Port_connect_Checked" Unchecked="btn_Port_connect_Unchecked" Background="#FF929090"/>
+                    <Grid Height="30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Comport"  FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cbox_M2_Comport" Grid.Column="1"  FontSize="15" VerticalAlignment="Center" 
+                                  SelectedItem="{Binding Comport}"
+                                  HorizontalContentAlignment="Center"
+                                  DropDownOpened="cbox_M1_Comport_DropDownOpened"
+                                  DropDownClosed="cbox_M1_Comport_DropDownClosed"/>
+                    </Grid>
+
+                    <Grid Height="30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Step Delay" FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Text="{Binding StepDelay, FallbackValue=8}" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"
+                                 PreviewKeyDown="txt_stepDelay_PreviewKeyDown"/>
+                    </Grid>
+
+                    <Grid Height="30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Jog Step" FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+
+                        <TextBox Grid.Column="1" Text="{Binding Jop_Steps, FallbackValue=300}" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <ToggleButton 
+                                  Style="{DynamicResource ToggleButtonStyle_text_switch}" 
+                                  Background="#FF929090" Height="30" Content="Jog Mode"
+                                  IsChecked="{Binding Continue_Jog, Mode=TwoWay}"
+                                  Click="ToggleButton_Click" Margin="0,5,0,5"/>
+
+                    <Grid Height="30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Direction" FontSize="15" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="cbox_M2_direction" Grid.Column="1" MaxHeight="25" SelectedIndex="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                            <ComboBoxItem Content="X"/>
+                            <ComboBoxItem Content="Y"/>
+                            <ComboBoxItem Content="Z"/>
+                        </ComboBox>
+                        <ToggleButton Style="{DynamicResource ToggleButtonStyle_Dot}" ToolTip="Reverse Direction" x:Name="tbtn_M2_direction" Grid.Column="2" Click="tbtn_direction_Click"/>
+                    </Grid>
+
+                    <Grid Height="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button 
+                            Style="{DynamicResource style_BTN_icon_Only}"
+                            Background="#FFE6E6E6"
+                            ToolTip="Show Save position Box"
+                            >
+                            <Image Source="Resources/bleach.png"
+                               Visibility="Collapsed" />
+                        </Button>
+                        <Button   Style="{DynamicResource style_Button_circle_Text_Only_ImageProperty}" Background="#FFE6E6E6" Grid.Column="1" >
+                            <TextBlock Text="1"/>
+                        </Button>
+                        <Button   Style="{DynamicResource style_Button_circle_Text_Only_ImageProperty}" Background="#FFE6E6E6" Grid.Column="2" >
+                            <TextBlock Text="2"/>
+                        </Button>
+                        <Button   Style="{DynamicResource style_Button_circle_Text_Only_ImageProperty}" Background="#FFE6E6E6" Grid.Column="3" >
+                            <TextBlock Text="3"/>
+                        </Button>
+                        <Button   Style="{DynamicResource style_Button_circle_Text_Only_ImageProperty}" Background="#FFE6E6E6" Grid.Column="4" >
+                            <TextBlock Text="4"/>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Width="240" Height="150" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition />
+                            <ColumnDefinition  Width="50"/>
+                            <ColumnDefinition  Width="50"/>
+                            <ColumnDefinition  Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="btn_Y_plus_M2" 
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown" 
+                                PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                            Style="{DynamicResource style_BTN_Rect_icon_Only}" ToolTip="Y+" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" Grid.Column="3">
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+                        <Button x:Name="btn_Y_minus_M2"  Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown"
+                                    PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="Y-" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" Grid.Row="2" RenderTransformOrigin="0.5,0.5" Grid.Column="3">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="180"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+
+                        <Button x:Name="btn_X_plus_M2"  Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown"
+                                    PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="X+" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="5">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="90.944"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+                        <Button x:Name="btn_X_minus_M2"  Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewKeyDown="btn_Disable_Focus_Change_PreviewKeyDown"
+                                    PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="X-" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Grid.Column="2">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-90.821"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+
+                        <Button x:Name="btn_Z_plus_M2"  Style="{DynamicResource style_BTN_Rect_icon_Only}" 
+                                 PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="Z+" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" RenderTransformOrigin="0.5,0.5">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+                        <Button x:Name="btn_Z_minus_M2"  Style="{DynamicResource style_BTN_Rect_icon_Only}"
+                                PreviewMouseLeftButtonDown="btn_MotorMove_PreviewMouseLeftButtonDown"
+                                    PreviewMouseLeftButtonUp="btn_MotorMove_PreviewMouseLeftButtonUp"
+                                ToolTip="Z-" Background="#FFE6E6E6" Click="btn_Motor_Dir_Click" RenderTransformOrigin="0.5,0.5" Grid.Row="2">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="180"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                            <Image Source="Resources/bleach.png"
+                                       Visibility="Collapsed" />
+                        </Button>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="X:"  FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Y:" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="2"/>
+                        <TextBlock Text="Z:"  FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="4"/>
+
+                        <TextBlock Text="{Binding model_2.Pos_X}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+                        <TextBlock Text="{Binding model_2.Pos_Y}"  FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="3"/>
+                        <TextBlock Text="{Binding model_2.Pos_Z}"  FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="5"/>
+                    </Grid>
+                </Grid>
+
+
+
+            </Grid>
+
+        </StackPanel>
+
+
+    </Grid>
+</Window>
